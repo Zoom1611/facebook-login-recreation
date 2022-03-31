@@ -7,8 +7,15 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@dicebear/avatars": "^4.10.2",
+    "@dicebear/avatars-identicon-sprites": "^4.10.2",
+    "@dicebear/avatars-male-sprites": "^4.10.2",
+    "@dicebear/pixel-art": "^4.10.2",
+    "axios": "^0.26.1",
     "core-js": "^3.6.5",
+    "element-plus": "^2.1.4",
     "vue": "^3.0.0",
+    "vue-axios": "^3.4.1",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
