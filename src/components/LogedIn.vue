@@ -30,7 +30,7 @@
         </el-col>
       </el-row>
       <div class="closeButtonBox">
-        <el-button @click="closeLogedIn" class="closeButton">Close</el-button>
+        <el-button @click="closeLogedIn" size="large">Close</el-button>
       </div>
     </div>
   </div>
@@ -104,9 +104,5 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 20px;
-}
-.closeButton {
-  width: 100px;
-  font-size: 1.5rem;
 }
 </style>
