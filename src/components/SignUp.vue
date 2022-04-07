@@ -57,7 +57,7 @@
 import { reactive, ref } from "@vue/reactivity";
 
 export default {
-  emits: ["showDialog", "cancelDialog"],
+  emits: ["submitSignup", "cancelDialog"],
   setup(props, context) {
     const form = reactive({
       firstName: "",
@@ -71,20 +71,7 @@ export default {
 
     let ruleFormRef = ref("");
 
-    const onSubmit = async (form, ruleFormRef) => {
-      if (!ruleFormRef) return;
-      await ruleFormRef.validate((valid) => {
-        if (valid) {
-          context.emit("showDialog", form);
-        }
-      });
-    };
-
-    const onCancel = () => {
-      context.emit("cancelDialog", form);
-    };
-
-    const validatePass = (value, callback) => {
+    const validatePass = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("Please input the password"));
       } else {
@@ -96,7 +83,7 @@ export default {
       }
     };
 
-    const validatePass2 = (value, callback) => {
+    const validatePass2 = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("Please input the password again"));
       } else if (value !== form.password) {
@@ -150,6 +137,19 @@ export default {
         },
       ],
     });
+
+    const onSubmit = async (form, ruleFormRef) => {
+      if (!ruleFormRef) return;
+      await ruleFormRef.validate((valid) => {
+        if (valid) {
+          context.emit("submitSignup", form);
+        }
+      });
+    };
+
+    const onCancel = () => {
+      context.emit("cancelDialog", null);
+    };
 
     return { form, onSubmit, onCancel, rules, ruleFormRef };
   },

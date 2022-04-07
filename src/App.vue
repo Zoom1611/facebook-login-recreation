@@ -5,7 +5,7 @@
         <div class="main">
           <el-row>
             <el-col :span="16">
-              <div class="listOfLogedUsers">
+              <div>
                 <img
                   src="./assets/facebook-logo.svg"
                   alt="Facebook Logo"
@@ -21,7 +21,18 @@
                     v-for="(user, index) in listOfUsers"
                     :key="index"
                   >
-                    <div class="logedUserBox" @click="openInfo(listOfUsers)">
+                    <div class="logedUserBox">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        class="close"
+                        @click="deleteAccount(index)"
+                      >
+                        <path
+                          d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm3.707,12.293a1,1,0,1,1-1.414,1.414L12,13.414,9.707,15.707a1,1,0,0,1-1.414-1.414L10.586,12,8.293,9.707A1,1,0,0,1,9.707,8.293L12,10.586l2.293-2.293a1,1,0,0,1,1.414,1.414L13.414,12Z"
+                        />
+                      </svg>
+
                       <svg v-html="user.svg" class="clicked"></svg>
                       <div class="nameText">{{ user.firstName }}</div>
                     </div>
@@ -38,7 +49,7 @@
                       name="email"
                       placeholder="Email adress"
                       class="emailInput"
-                      v-model="emailInputForLogIn"
+                      v-model="inputForEmail"
                       required
                     />
                     <input
@@ -46,7 +57,7 @@
                       name="password"
                       placeholder="Password"
                       class="passwordInput"
-                      v-model="emailInputForPassword"
+                      v-model="inputForPassword"
                       required
                     />
                   </div>
@@ -54,11 +65,7 @@
                     <button
                       class="loginButton"
                       @click.prevent="
-                        logIn(
-                          listOfUsers,
-                          emailInputForLogIn,
-                          emailInputForPassword
-                        )
+                        logIn(listOfUsers, inputForEmail, inputForPassword)
                       "
                     >
                       Log in
@@ -84,10 +91,18 @@
   </header>
   <SignUp
     v-if="showSignUp"
-    @showDialog="closeSignUp"
+    @submitSignup="closeSignUp"
     @cancelDialog="closeDialog"
   ></SignUp>
-  <LogedIn v-if="showLogedIn"></LogedIn>
+  <LogedIn
+    v-if="showLogedIn"
+    :logedUser="logedUser"
+    @closeLogedIn="closeLogedIn"
+  ></LogedIn>
+  <UserDoesntExist
+    v-if="showUserDoesntExist"
+    @closeMessageForWrongInput="closeMessageForWrongInput"
+  ></UserDoesntExist>
 </template>
 
 <script>
@@ -96,8 +111,11 @@ import * as style from "@dicebear/pixel-art";
 import SignUp from "./components/SignUp.vue";
 import { reactive, ref } from "@vue/reactivity";
 import LogedIn from "./components/LogedIn.vue";
+import UserDoesntExist from "./components/UserDoesntExist.vue";
+import deleteSvg from "./assets/reshot-icon-delete-KL8MB62NXD.svg";
+
 export default {
-  components: { SignUp, LogedIn },
+  components: { SignUp, LogedIn, UserDoesntExist },
   setup() {
     const beard = () => {
       let beard = [];
@@ -366,6 +384,7 @@ export default {
     };
 
     let showSignUp = ref(false);
+
     const createAccount = () => {
       showSignUp.value = true;
     };
@@ -376,7 +395,6 @@ export default {
       showSignUp.value = false;
       form.svg = getAvatar();
       listOfUsers.push(form);
-      console.log(listOfUsers);
     };
 
     const closeDialog = () => {
@@ -384,19 +402,44 @@ export default {
     };
 
     let showLogedIn = ref(false);
+    let inputForPassword = ref("");
+    let inputForEmail = ref("");
+    let logedUser = ref("");
+    let showUserDoesntExist = ref(false);
+
     const logIn = (listOfUsers, email, password) => {
       for (let i = 0; i < listOfUsers.length; i++) {
         if (
-          listOfUsers[i].email === email ||
+          listOfUsers[i].email === email &&
           listOfUsers[i].password === password
         ) {
           showLogedIn.value = true;
+          logedUser.value = listOfUsers[i];
+          inputForPassword.value = "";
+          inputForEmail.value = "";
+        } else if (
+          listOfUsers[i].email !== email ||
+          listOfUsers[i].password !== password
+        ) {
+          showUserDoesntExist.value = true;
+          inputForPassword.value = "";
+          inputForEmail.value = "";
         }
       }
     };
 
-    const openInfo = (userInfo) => {
-      console.log(userInfo);
+    const closeLogedIn = () => {
+      showLogedIn.value = false;
+    };
+
+    const closeMessageForWrongInput = () => {
+      showUserDoesntExist.value = false;
+    };
+
+    const deleteAccount = (index) => {
+      if (index > -1) {
+        listOfUsers.splice(index, 1);
+      }
     };
 
     return {
@@ -408,7 +451,13 @@ export default {
       listOfUsers,
       logIn,
       showLogedIn,
-      openInfo,
+      inputForPassword,
+      inputForEmail,
+      closeLogedIn,
+      logedUser,
+      showUserDoesntExist,
+      closeMessageForWrongInput,
+      deleteAccount,
     };
   },
 };
@@ -451,7 +500,6 @@ export default {
   flex-direction: column;
   align-items: center;
   margin-right: 10px;
-  cursor: pointer;
 }
 .logedUserBox:hover {
   box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
@@ -570,5 +618,14 @@ export default {
 .emailInput::placeholder,
 .passwordInput::placeholder {
   color: #9097a2;
+}
+.clicked {
+}
+.close {
+  width: 30px;
+  padding-top: 5px;
+  padding-left: 5px;
+  align-self: flex-start;
+  cursor: pointer;
 }
 </style>
