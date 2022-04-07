@@ -619,8 +619,6 @@ export default {
 .passwordInput::placeholder {
   color: #9097a2;
 }
-.clicked {
-}
 .close {
   width: 30px;
   padding-top: 5px;
