@@ -4,7 +4,15 @@
       <div class="centerMain">
         <div class="main">
           <el-row>
-            <el-col :span="16">
+            <el-col
+              :span="16"
+              :xs="24"
+              :sm="8"
+              :md="12"
+              :lg="16"
+              :xl="16"
+              class="firstCol"
+            >
               <div>
                 <img
                   src="./assets/facebook-logo.svg"
@@ -40,7 +48,15 @@
                 </div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col
+              :span="8"
+              :xs="24"
+              :sm="12"
+              :md="12"
+              :lg="8"
+              :xl="8"
+              class="secondCol"
+            >
               <div class="loginForm">
                 <form action="">
                   <div>
@@ -625,5 +641,18 @@ export default {
   padding-left: 5px;
   align-self: flex-start;
   cursor: pointer;
+}
+
+@media (max-width: 992px) {
+  .firstCol,
+  .secondCol {
+    margin-left: 20px;
+  }
+}
+@media (max-width: 768px) {
+  .firstCol,
+  .secondCol {
+    margin-left: 50px;
+  }
 }
 </style>
